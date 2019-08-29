@@ -82,11 +82,14 @@
             }
         ]
     }
+    console.log("example: " + example);
     
     var data = JSON.parse(JSON.stringify(example));
+    console.log(data);
     var results = $("#results");
+    console.log("results: " + results);
     for (i = 0; i < data.length; i++) {
-        console.log(data[i])
+        console.log("data[i]: " + data[i])
         /*results.append(
             "<tr>" +
             "   <td>" + data[i].name + "<span>" + data[i].alt + "</span></td>" +
