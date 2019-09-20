@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <p style="color: black; position: absolute; top:0;">Alpha 1.2.0.1</p>
+    <p style="color: black; position: absolute; top:0;">Alpha 1.3.0</p>
 <div style="width: 100%; height: 30vh; padding-top: 20vh; margin-bottom: 5em; display: flex; flex-flow: column; align-items: center; justify-content: center;">
     <label style="text-align: center;">
         <h2 style="font-family: sans-serif; font-size: 2.1em">Search for something to recycle</h2>
@@ -47,20 +47,33 @@
 </style>
 
 <script>
-    var list = example;
-    console.log("list[0]: " + list[0]);
-    console.log("list[0].name: " + list[0].name);
-    
-    var table = $("#results");
-    for (i = 0; i < list.length; i++) {
-        console.log("loop " + i);
-        table.append(
-            "<tr>" +
-            "   <td>" + list[i].name + "<span>" + list[i].alt + "</span></td>" +
-            "   <td>" + list[i].stream + "</td>" +
-            "</tr>"
-        );
-    }
+    $(function(){
+        var sheetUrl = 'https://spreadsheets.google.com/feeds/cells/1Jww-nnPjNI1D-AjWbNY_bxUY6JDK632RqKb7NfYbGzg/1/public/full?alt=json';
+
+        var table = $("#results");
+
+        $.getJSON(sheetUrl, function(data){
+            var entry = data.feed.entry;
+            var name = "";
+            var alt = "";
+            var stream = "";
+
+            for (i = 3; i < entry.length; i++){
+                name = entry[i].content.$t;
+                i++;
+                alt = entry[i].content.$t;
+                i++;
+                stream = entry[i].content.$t;
+
+                table.append(
+                    "<tr>" +
+                    "   <td>" + name + "<span>" + alt + "</span></td>" +
+                    "   <td>" + stream + "</td>" +
+                    "</tr>"
+                );
+            }
+        })
+    });
     
     var input = $("#searchbox");
     input.on( "keyup", function search() {
