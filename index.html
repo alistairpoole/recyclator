@@ -6,13 +6,18 @@
 </head>
 
 <body>
-    <p style="color: black; position: absolute; top:0;">Alpha 1.3.0</p>
-<div style="width: 100%; height: 30vh; padding-top: 20vh; margin-bottom: 5em; display: flex; flex-flow: column; align-items: center; justify-content: center;">
+    <p style="color: black; position: absolute; top:0;">Alpha 1.3.5</p>
+<div style="width: 100%; height: 30vh; padding-top: 20vh; display: flex; flex-flow: column; align-items: center; justify-content: center;">
     <label style="text-align: center;">
-        <h2 style="font-family: sans-serif; font-size: 2.1em">Search for something to recycle</h2>
+        <img style="max-width: 550px; width: 100%;" src="https://drive.google.com/uc?id=1fpBsYZG8JvlwaqGpdRNw1bNoiIrPlGYK">
         <p style="font-family: sans-serif;">Start typing the name of an item to find out which stream it belongs in</p>
     </label>
     <input type="text" id="searchbox" style="width: 450px; padding: 10px; max-width: 90%; font-size: 1.2em; border-radius: 5px; border: 1px solid grey;">
+    <p style="text-align: center"><a onclick="$('#suggestions').toggleClass('show-div');" style="cursor: pointer; color: blue;">Can't find what you're looking for? Let us know!</a></p>
+</div>
+    
+<div style="max-width: 550px; padding: 0 3%; margin: auto; margin-bottom: 5em; box-sizing: border-box; overflow: hidden; transition: height .15s;" class="init-hidden" id="suggestions">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScN91HASr4qc-YwVQ8IQm8xc77L35EwGHMwJ1cLqXz4jgaCzQ/viewform?embedded=true" style="width: 100%" height="448" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 </div>
 
 <div style="max-width: 550px; padding: 0px 3%; box-sizing: border-box; margin: auto;">
@@ -43,6 +48,12 @@
     }
     body {
         margin-right: calc(100% - 100vw);
+    }
+    .init-hidden.show-div {
+        height: 448px;
+    }
+    .init-hidden {
+        height: 0px;
     }
 </style>
 
@@ -77,6 +88,9 @@
     
     var input = $("#searchbox");
     input.on( "keyup", function search() {
+        //hide suggestion box on search
+        $('#suggestions').removeClass('show-div');
+        
         // Declare variables
         var tr = $("#results tr");
         var searchTerm = input.val();
