@@ -1,120 +1,89 @@
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="example.js"></script>
-</head>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="example.js"></script>
+        <link rel="stylesheet" href="styles.css">
+    </head>
 
-<body>
-    <p style="color: black; position: absolute; top:0;">Alpha 1.4.0.1</p>
-<div style="width: 100%; height: 30vh; padding-top: 20vh; display: flex; flex-flow: column; align-items: center; justify-content: center;">
-    <label style="text-align: center;">
-        <img style="max-width: 550px; width: 100%;" src="https://drive.google.com/uc?id=1fpBsYZG8JvlwaqGpdRNw1bNoiIrPlGYK">
-        <p style="font-family: sans-serif;">Start typing the name of an item to find out which stream it belongs in</p>
-    </label>
-    <input type="text" id="searchbox" style="width: 450px; padding: 10px; max-width: 90%; font-size: 1.2em; border-radius: 5px; border: 1px solid grey;">
-    <p style="text-align: center"><a onclick="$('#suggestions').toggleClass('show-div');" style="cursor: pointer; color: blue;">Can't find what you're looking for? Let us know!</a></p>
-</div>
-    
-<div style="max-width: 550px; padding: 0 3%; margin: auto; margin-bottom: 5em; box-sizing: border-box; overflow: hidden; transition: height .15s;" class="init-hidden" id="suggestions">
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScN91HASr4qc-YwVQ8IQm8xc77L35EwGHMwJ1cLqXz4jgaCzQ/viewform?embedded=true" style="width: 100%" height="448" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-</div>
+    <body>
+        <p class="version">Alpha 1.5.0</p>
+        <div class="search">
+            <label>
+                <img id="logo" src="https://drive.google.com/uc?id=1fpBsYZG8JvlwaqGpdRNw1bNoiIrPlGYK">
+                <p>Start typing the name of an item to find out which stream it belongs in</p>
+            </label>
+            <input type="text" id="searchbox">
+            <p class="link"><a onclick="$('#suggestions').toggleClass('show-div');">Can't find what you're looking for? Let us know!</a></p>
+        </div>
 
-<div style="max-width: 550px; padding: 0px 3%; box-sizing: border-box; margin: auto;">
-    <table id="results">
-    </table>
-</div>
+        <div class="init-hidden" id="suggestions">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScN91HASr4qc-YwVQ8IQm8xc77L35EwGHMwJ1cLqXz4jgaCzQ/viewform?embedded=true" style="width: 100%" height="448" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+        </div>
 
-<style>
-    #results {
-        width: 100%;
-    }
-    #results tr {
-        border-bottom: 1px solid grey;
-        display: none;
-    }
-    #results td {
-        padding: 15px;
-        font-family: sans-serif;
-    }
-    #results td:first-child {
-        text-align: left;
-    }
-    #results td:last-child {
-        text-align: right;
-    }
-    #results span {
-        display: none;
-    }
-    body {
-        margin-right: calc(100% - 100vw);
-    }
-    .init-hidden.show-div {
-        height: 448px;
-    }
-    .init-hidden {
-        height: 0px;
-    }
-</style>
+        <div id="main">
+            <table id="results">
+            </table>
+        </div>
 
-<script>
-    $(function(){
-        var sheetUrl = 'https://spreadsheets.google.com/feeds/cells/1Jww-nnPjNI1D-AjWbNY_bxUY6JDK632RqKb7NfYbGzg/1/public/full?alt=json';
+        <script>
+            $(function(){
+                var sheetUrl = 'https://spreadsheets.google.com/feeds/cells/1Jww-nnPjNI1D-AjWbNY_bxUY6JDK632RqKb7NfYbGzg/1/public/full?alt=json';
 
-        var table = $("#results");
+                var table = $("#results");
 
-        $.getJSON(sheetUrl, function(data){
-            var entry = data.feed.entry;
-            var name = "";
-            var alt = "";
-            var stream = "";
+                $.getJSON(sheetUrl, function(data){
+                    var entry = data.feed.entry;
+                    var name = "";
+                    var alt = "";
+                    var stream = "";
 
-            for (i = 3; i < entry.length; i++){
-                name = entry[i].content.$t;
-                i++;
-                alt = entry[i].content.$t;
-                i++;
-                stream = entry[i].content.$t;
+                    for (i = 3; i < entry.length; i++){
+                        name = entry[i].content.$t;
+                        i++;
+                        alt = entry[i].content.$t;
+                        i++;
+                        stream = entry[i].content.$t;
 
-                table.append(
-                    "<tr>" +
-                    "   <td>" + name + "<span>" + alt + "</span></td>" +
-                    "   <td>" + stream + "</td>" +
-                    "</tr>"
-                );
-            }
-        })
-    });
-    
-    var input = $("#searchbox");
-    input.on( "keyup", function search() {
-        //hide suggestion box on search
-        $('#suggestions').removeClass('show-div');
-        
-        // Declare variables
-        var tr = $("#results tr");
-        var searchTerm = input.val();
-        if (searchTerm == "") {
-            // Loop through all table rows and hide
-            for (i = 0; i < tr.length; i++) {
-                tr[i].style.display = "none";
-            }
-        } else {
-            var filter = searchTerm.toUpperCase();
-            // Loop through all table rows, and hide those who don't match the search query
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "table-row";
-                    } else {
+                        table.append(
+                            "<tr>" +
+                            "   <td>" + name + "<span>" + alt + "</span></td>" +
+                            "   <td>" + stream + "</td>" +
+                            "</tr>"
+                        );
+                    }
+                })
+            });
+
+            var input = $("#searchbox");
+            input.on( "keyup", function search() {
+                //hide suggestion box on search
+                $('#suggestions').removeClass('show-div');
+
+                // Declare variables
+                var tr = $("#results tr");
+                var searchTerm = input.val();
+                if (searchTerm == "") {
+                    // Loop through all table rows and hide
+                    for (i = 0; i < tr.length; i++) {
                         tr[i].style.display = "none";
                     }
+                } else {
+                    var filter = searchTerm.toUpperCase();
+                    // Loop through all table rows, and hide those who don't match the search query
+                    for (i = 0; i < tr.length; i++) {
+                        td = tr[i].getElementsByTagName("td")[0];
+                        if (td) {
+                            txtValue = td.textContent || td.innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "table-row";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
+                    }
                 }
-            }
-        }
-    });
-</script>
-</body>
+            });
+        </script>
+    </body>
 </html>
